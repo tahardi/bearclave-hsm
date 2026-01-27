@@ -1,0 +1,120 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base-clang",
+      "displayName": "Clang Base",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang"
+      }
+    },
+    {
+      "name": "debug",
+      "inherits": "base-clang",
+      "displayName": "Debug",
+      "binaryDir": "${sourceDir}/build-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "base-clang",
+      "displayName": "Release",
+      "binaryDir": "${sourceDir}/build-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "sanitize-asan-ubsan",
+      "inherits": "base-clang",
+      "displayName": "Clang + ASan/UBSan",
+      "binaryDir": "${sourceDir}/build-sanitize-asan-ubsan",
+      "cacheVariables": {
+        "USE_SANITIZER": "AddressUndefined",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "sanitize-msan",
+      "inherits": "base-clang",
+      "displayName": "Clang + MSan",
+      "binaryDir": "${sourceDir}/build-sanitize-msan",
+      "cacheVariables": {
+        "USE_SANITIZER": "Memory",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "sanitize-tsan",
+      "inherits": "base-clang",
+      "displayName": "Clang + TSan",
+      "binaryDir": "${sourceDir}/build-sanitize-tsan",
+      "cacheVariables": {
+        "USE_SANITIZER": "Thread",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "build-release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "build-sanitize-asan-ubsan",
+      "configurePreset": "sanitize-asan-ubsan"
+    },
+    {
+      "name": "build-sanitize-msan",
+      "configurePreset": "sanitize-msan"
+    },
+    {
+      "name": "build-sanitize-tsan",
+      "configurePreset": "sanitize-tsan"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "dev-debug",
+      "steps": [
+        { "type": "configure", "name": "debug" },
+        { "type": "build", "name": "build-debug" }
+      ]
+    },
+    {
+      "name": "dev-release",
+      "steps": [
+        { "type": "configure", "name": "release" },
+        { "type": "build", "name": "build-release" }
+      ]
+    },
+    {
+      "name": "dev-sanitize-asan-ubsan",
+      "steps": [
+        { "type": "configure", "name": "sanitize-asan-ubsan" },
+        { "type": "build", "name": "build-sanitize-asan-ubsan" }
+      ]
+    },
+    {
+      "name": "dev-sanitize-msan",
+      "steps": [
+        { "type": "configure", "name": "sanitize-msan" },
+        { "type": "build", "name": "build-sanitize-msan" }
+      ]
+    },
+    {
+      "name": "dev-sanitize-tsan",
+      "steps": [
+        { "type": "configure", "name": "sanitize-tsan" },
+        { "type": "build", "name": "build-sanitize-tsan" }
+      ]
+    }
+  ]
+}
