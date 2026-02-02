@@ -14,16 +14,20 @@ include_dir=./include
 src_dir=./src
 test_dir=./tests
 
+header_files := $(shell find $(include_dir) -name '*.h')
+source_files := $(shell find $(src_dir) -name '*.c')
+test_files := $(shell find $(test_dir) -name '*.c')
+
 .PHONY: fmt
 fmt:
-	clang-format -i \
-		$(include_dir)/*.h \
-		$(src_dir)/*.c \
-		$(test_dir)/*.c
+	@clang-format -i \
+		$(header_files) \
+		$(source_files) \
+		$(test_files)
 
 .PHONY: lint
 lint:
-	clang-tidy \
+	@clang-tidy \
 		--config-file .clang-tidy \
 		-p $(build_dir) \
-		$(src_dir)/*.c
+		$(source_files)
