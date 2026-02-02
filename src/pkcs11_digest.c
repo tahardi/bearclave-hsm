@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 
 CK_RV C_DigestInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism) {
@@ -38,3 +39,4 @@ CK_RV C_DigestFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDigest,
 	(void)pulDigestLen;
 	return CKR_FUNCTION_NOT_SUPPORTED;
 }
+// NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)

@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 
 static CK_FUNCTION_LIST g_function_list_3_0 = {
@@ -105,3 +106,4 @@ CK_RV C_GetFunctionList(CK_FUNCTION_LIST_PTR_PTR ppFunctionList) {
 	*ppFunctionList = &g_function_list_3_0;
 	return CKR_OK;
 }
+// NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)

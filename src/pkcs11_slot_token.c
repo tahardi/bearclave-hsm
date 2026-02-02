@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 
 CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList,
@@ -63,3 +64,4 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_UTF8CHAR_PTR pOldPin,
 	(void)ulNewLen;
 	return CKR_FUNCTION_NOT_SUPPORTED;
 }
+// NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)

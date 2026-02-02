@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 
 CK_RV C_DigestEncryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart,
@@ -45,3 +46,4 @@ CK_RV C_DecryptVerifyUpdate(CK_SESSION_HANDLE hSession,
 	(void)pulPartLen;
 	return CKR_FUNCTION_NOT_SUPPORTED;
 }
+// NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)

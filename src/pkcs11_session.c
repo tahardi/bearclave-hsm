@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 
 CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
@@ -61,3 +62,4 @@ CK_RV C_Logout(CK_SESSION_HANDLE hSession) {
 	(void)hSession;
 	return CKR_FUNCTION_NOT_SUPPORTED;
 }
+// NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)

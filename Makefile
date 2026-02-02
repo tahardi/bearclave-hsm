@@ -29,5 +29,6 @@ fmt:
 lint:
 	@clang-tidy \
 		--config-file .clang-tidy \
+		--quiet \
 		-p $(build_dir) \
 		$(source_files)

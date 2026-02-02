@@ -1,3 +1,4 @@
+// NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 
 CK_RV C_GenerateKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism,
@@ -67,3 +68,4 @@ CK_RV C_DeriveKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism,
 	(void)phKey;
 	return CKR_FUNCTION_NOT_SUPPORTED;
 }
+// NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)
