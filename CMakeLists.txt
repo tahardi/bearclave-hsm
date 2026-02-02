@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.1)
-project(bearsm C)
+project(bearclave-hsm C)
 
 set(CMAKE_C_STANDARD 11)
 
@@ -17,17 +17,33 @@ if(STRICT_WARNINGS AND CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     add_compile_options("-Wall" "-Wextra" "-Wpedantic" "-Werror")
 endif()
 
-add_library(bearsm src/pkcs11.c)
+set(PKCS11_SOURCES
+        src/pkcs11.c
+        src/pkcs11_decrypt.c
+        src/pkcs11_digest.c
+        src/pkcs11_dual.c
+        src/pkcs11_encrypt.c
+        src/pkcs11_general.c
+        src/pkcs11_key.c
+        src/pkcs11_object.c
+        src/pkcs11_parallel.c
+        src/pkcs11_random.c
+        src/pkcs11_session.c
+        src/pkcs11_sign.c
+        src/pkcs11_slot_token.c
+        src/pkcs11_verify.c
+)
 
-target_include_directories(bearsm
+add_library(bearclave-hsm ${PKCS11_SOURCES})
+
+target_include_directories(bearclave-hsm
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
         SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/third_party/pkcs11
 )
 
-add_executable(test_bearsm tests/test_pkcs11.c)
+add_executable(test_bearclave-hsm tests/test_pkcs11.c)
 
-target_link_libraries(test_bearsm PRIVATE bearsm)
-
+target_link_libraries(test_bearclave-hsm PRIVATE bearclave-hsm)
 
 # Define a variable for turning on sanitizers. Default to off.
 option(USE_SANITIZER "Enable sanitizers (Address, Undefined, AddressUndefined, Memory, Thread)" OFF)

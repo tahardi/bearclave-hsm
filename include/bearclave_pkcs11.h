@@ -1,8 +1,14 @@
-/* include/pkcs11_vendor.h */
-#ifndef BEARSM_PKCS11_VENDOR_H
-#define BEARSM_PKCS11_VENDOR_H
+#ifndef BEARCLAVE_PKCS11_H
+#define BEARCLAVE_PKCS11_H
 
-/* Minimal “typical UNIX” PKCS#11 platform macros */
+/* According to pkcs11.h, we must define 5 platform-specific macros:
+ *
+ * CK_PTR
+ * CK_DECLARE_FUNCTION
+ * CK_DECLARE_FUNCTION_POINTER
+ * CK_CALLBACK_FUNCTION
+ * NULL_PTR
+ */
 #ifndef CK_PTR
 #define CK_PTR *
 #endif
@@ -25,4 +31,4 @@
 
 #include "pkcs11.h"
 
-#endif /* BEARSM_PKCS11_VENDOR_H */
+#endif // BEARCLAVE_PKCS11_H
