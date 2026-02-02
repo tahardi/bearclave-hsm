@@ -1,4 +1,4 @@
-#include "bearclave_pkcs11.h"
+#include "bearclave/pkcs11.h"
 
 CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate,
 		     CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject) {

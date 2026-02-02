@@ -1,4 +1,4 @@
-#include "bearclave_pkcs11.h"
+#include "bearclave/pkcs11.h"
 
 static CK_FUNCTION_LIST g_function_list_3_0 = {
 	.version = {.major = 3, .minor = 0},

@@ -1,4 +1,4 @@
-#include "bearclave_pkcs11.h"
+#include "bearclave/pkcs11.h"
 
 CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList,
 		    CK_ULONG_PTR pulCount) {

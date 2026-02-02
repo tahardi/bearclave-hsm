@@ -1,4 +1,4 @@
-#include "bearclave_pkcs11.h"
+#include "bearclave/pkcs11.h"
 
 CK_RV C_DigestInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism) {
 	(void)hSession;

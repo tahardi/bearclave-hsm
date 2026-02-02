@@ -29,6 +29,6 @@
 #define NULL_PTR 0
 #endif
 
-#include "pkcs11.h"
+#include "pkcs11/pkcs11.h"
 
 #endif // BEARCLAVE_PKCS11_H

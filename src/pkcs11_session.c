@@ -1,4 +1,4 @@
-#include "bearclave_pkcs11.h"
+#include "bearclave/pkcs11.h"
 
 CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
 		    CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession) {
