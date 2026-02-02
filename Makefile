@@ -6,24 +6,52 @@ SHELL := bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
-.PHONY: pre-pr
-pre-pr: fmt lint
-
-build_dir=./build-debug
+default_build=build-debug
 include_dir=./include
 src_dir=./src
 test_dir=./tests
 
+header_files := $(shell find $(include_dir) -name '*.h')
+source_files := $(shell find $(src_dir) -name '*.c')
+test_files := $(shell find $(test_dir) -name '*.c')
+
+.PHONY: pre-pr
+pre-pr: fmt lint test
+
+.PHONY: build
+build: $(default_build)
+
+.PHONY: build-%
+build-%:
+	@cmake --preset $*
+	@cmake --build --preset build-$*
+
 .PHONY: fmt
 fmt:
-	clang-format -i \
-		$(include_dir)/*.h \
-		$(src_dir)/*.c \
-		$(test_dir)/*.c
+	@clang-format -i \
+		$(header_files) \
+		$(source_files) \
+		$(test_files)
 
 .PHONY: lint
 lint:
-	clang-tidy \
+	@clang-tidy \
 		--config-file .clang-tidy \
-		-p $(build_dir) \
-		$(src_dir)/*.c
+		--quiet \
+		-p ./$(default_build) \
+		$(source_files)
+
+.PHONY: test
+test: test-debug \
+	test-sanitize-asan-ubsan \
+	test-sanitize-msan \
+	test-sanitize-tsan
+
+.PHONY: test-%
+test-%: build-%
+	@echo "Testing preset: $*"
+	@cmake --build ./build-$* --target test
+
+.PHONY: clean
+clean:
+	@rm -rf ./build-*
