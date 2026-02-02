@@ -6,9 +6,6 @@ set(CMAKE_C_STANDARD 11)
 # Need this for clang-tidy to work
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(include/)
-include_directories(third_party/)
-
 # Define STRICT_WARNINGS variable that defaults to ON and
 # adds strict compile flags. If you want to turn these off,
 # you can create a preset the sets "STRICT_WARNINGS": "OFF"
@@ -16,35 +13,6 @@ option(STRICT_WARNINGS "Enable strict compiler warnings" ON)
 if(STRICT_WARNINGS AND CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     add_compile_options("-Wall" "-Wextra" "-Wpedantic" "-Werror")
 endif()
-
-set(PKCS11_SOURCES
-        src/hsm.c
-        src/pkcs11.c
-        src/pkcs11_decrypt.c
-        src/pkcs11_digest.c
-        src/pkcs11_dual.c
-        src/pkcs11_encrypt.c
-        src/pkcs11_general.c
-        src/pkcs11_key.c
-        src/pkcs11_object.c
-        src/pkcs11_parallel.c
-        src/pkcs11_random.c
-        src/pkcs11_session.c
-        src/pkcs11_sign.c
-        src/pkcs11_slot_token.c
-        src/pkcs11_verify.c
-)
-
-add_library(bearclave-hsm ${PKCS11_SOURCES})
-
-target_include_directories(bearclave-hsm
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-        SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/third_party
-)
-
-add_executable(test_bearclave-hsm tests/test_pkcs11.c)
-
-target_link_libraries(test_bearclave-hsm PRIVATE bearclave-hsm)
 
 # Define a variable for turning on sanitizers. Default to off.
 option(USE_SANITIZER "Enable sanitizers (Address, Undefined, AddressUndefined, Memory, Thread)" OFF)
@@ -64,3 +32,34 @@ if(USE_SANITIZER)
         message(STATUS "Sanitizers enabled: Thread")
     endif()
 endif()
+
+include_directories(include/)
+include_directories(third_party/)
+set(PKCS11_SOURCES
+        src/hsm.c
+        src/pkcs11.c
+        src/pkcs11_decrypt.c
+        src/pkcs11_digest.c
+        src/pkcs11_dual.c
+        src/pkcs11_encrypt.c
+        src/pkcs11_general.c
+        src/pkcs11_key.c
+        src/pkcs11_object.c
+        src/pkcs11_parallel.c
+        src/pkcs11_random.c
+        src/pkcs11_session.c
+        src/pkcs11_sign.c
+        src/pkcs11_slot_token.c
+        src/pkcs11_verify.c
+)
+add_library(bearclave-hsm ${PKCS11_SOURCES})
+target_include_directories(bearclave-hsm
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+        SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+)
+
+enable_testing()
+find_package(cmocka REQUIRED)
+add_executable(test_pkcs11 tests/test_pkcs11.c)
+target_link_libraries(test_pkcs11 bearclave-hsm cmocka::cmocka)
+add_test(NAME pkcs11_tests COMMAND test_pkcs11)

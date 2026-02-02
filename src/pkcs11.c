@@ -4,11 +4,13 @@
 static CK_FUNCTION_LIST g_function_list_3_0 = {
 	.version = {.major = 3, .minor = 0},
 
+	// Defined at the end of this file
+	.C_GetFunctionList = C_GetFunctionList,
+
 	// General
 	.C_Initialize = C_Initialize,
 	.C_Finalize = C_Finalize,
 	.C_GetInfo = C_GetInfo,
-	.C_GetFunctionList = C_GetFunctionList,
 
 	// Slot and Token management
 	.C_GetSlotList = C_GetSlotList,

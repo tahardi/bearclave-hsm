@@ -16,8 +16,4 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo) {
 	return CKR_FUNCTION_NOT_SUPPORTED;
 }
 
-CK_RV C_GetFunctionList(CK_FUNCTION_LIST_PTR_PTR ppFunctionList) {
-	(void)ppFunctionList;
-	return CKR_FUNCTION_NOT_SUPPORTED;
-}
 // NOLINTEND(readability-non-const-parameter,bugprone-easily-swappable-parameters)
