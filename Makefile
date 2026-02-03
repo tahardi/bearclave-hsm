@@ -19,10 +19,10 @@ test_files := $(shell find $(test_dir) -name '*.c')
 pre-pr: fmt lint test
 
 .PHONY: build
-build: $(default_build)
+build: clean $(default_build)
 
 .PHONY: build-%
-build-%:
+build-%: clean
 	@cmake --preset $*
 	@cmake --build --preset build-$*
 
