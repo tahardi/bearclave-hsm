@@ -10,8 +10,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  todo:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: TODO
-        run: echo "TODO"
+      - name: Checkout Bearclave HSM
+        uses: actions/checkout@v6
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo snap install cmake --classic
+          sudo apt install -y clang clang-format clang-tidy ninja-build libcmocka-dev
+
+      - name: Lint
+        run: make lint
+
+  unit-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: [debug, sanitize-asan-ubsan, sanitize-msan, sanitize-tsan]
+    steps:
+      - name: Checkout Bearclave HSM
+        uses: actions/checkout@v6
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo snap install cmake --classic
+          sudo apt install -y clang clang-format clang-tidy ninja-build libcmocka-dev
+
+      - name: Build and Test - ${{ matrix.test }}
+        run: |
+          make test-${{ matrix.test }}
