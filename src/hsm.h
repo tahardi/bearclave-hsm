@@ -10,15 +10,22 @@ typedef struct {
 
 typedef enum {
 	HSM_OK = 0,
-	HSM_ERR_INVALID_MAN_ID = 1,
-	HSM_ERR_INVALID_LIB_DESC = 2,
-	HSM_ERR_MEMCPY = 3,
-	HSM_ERR_MEMSET = 4,
-	HSM_ERR_NOT_INITIALIZED = 5,
-	HSM_ERR_BAD_ARGS = 6,
+	HSM_ERR_MEMCPY = 1,
+	HSM_ERR_MEMSET = 2,
+	HSM_ERR_NOT_INITIALIZED = 3,
+	HSM_ERR_BAD_ARGS = 4,
 } hsm_error_t;
 
 extern hsm_t g_hsm;
+
+extern const char g_ck_version_major;
+extern const char g_ck_version_minor;
+extern const char g_lib_version_major;
+extern const char g_lib_version_minor;
+extern const char g_pad_val;
+extern const char *const g_man_id;
+extern const char *const g_lib_desc;
+extern const unsigned long int g_flags;
 
 hsm_error_t hsm_initialize(void);
 hsm_error_t hsm_finalize(void);

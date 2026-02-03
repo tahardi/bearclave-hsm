@@ -1,9 +1,11 @@
+#include "../src/hsm.h"
 #include "bearclave/pkcs11.h"
 
 #include <setjmp.h> // NOLINT
 #include <stdarg.h> // NOLINT
 #include <stddef.h> // NOLINT
 #include <stdlib.h>
+#include <string.h>
 
 #include <cmocka.h>
 
@@ -24,7 +26,7 @@ static void teardown(void) {
 	assert_int_equal(rv, CKR_OK);
 }
 
-static void test_C_Initialize_success(void **state) {
+static void test_C_Initialize_happy_path(void **state) {
 	// given
 	(void)state;
 	CK_FUNCTION_LIST_PTR pFunctionList = get_function_list_ptr();
@@ -38,7 +40,7 @@ static void test_C_Initialize_success(void **state) {
 	assert_int_equal(rv, CKR_OK);
 }
 
-static void test_C_Finalize_success(void **state) {
+static void test_C_Finalize_happy_path(void **state) {
 	// given
 	(void)state;
 	CK_FUNCTION_LIST_PTR pFunctionList = get_function_list_ptr();
@@ -56,7 +58,7 @@ static void test_C_Finalize_success(void **state) {
 	assert_int_equal(rv, CKR_OK);
 }
 
-static void test_C_Finalize_not_initialized(void **state) {
+static void test_C_Finalize_error_not_initialized(void **state) {
 	// given
 	(void)state;
 	CK_FUNCTION_LIST_PTR pFunctionList = get_function_list_ptr();
@@ -70,7 +72,7 @@ static void test_C_Finalize_not_initialized(void **state) {
 	assert_int_equal(rv, CKR_DEVICE_ERROR);
 }
 
-static void test_C_GetInfo_success(void **state) {
+static void test_C_GetInfo_happy_path(void **state) {
 	// given
 	(void)state;
 	CK_FUNCTION_LIST_PTR pFunctionList = get_function_list_ptr();
@@ -86,18 +88,18 @@ static void test_C_GetInfo_success(void **state) {
 
 	// then
 	assert_int_equal(rv, CKR_OK);
-	assert_int_equal(info.cryptokiVersion.major, '3');
-	assert_int_equal(info.cryptokiVersion.minor, '0');
-	assert_int_equal(info.libraryVersion.major, '0');
-	assert_int_equal(info.libraryVersion.minor, '1');
-	assert_int_equal(info.flags, 0);
-	assert_memory_equal(info.manufacturerID, "Bearclave", 9);
-	assert_memory_equal(info.libraryDescription,
-			    "Bearclave PKCS#11 HSM Emulator", 30);
+	assert_int_equal(info.cryptokiVersion.major, g_ck_version_major);
+	assert_int_equal(info.cryptokiVersion.minor, g_ck_version_minor);
+	assert_int_equal(info.libraryVersion.major, g_lib_version_major);
+	assert_int_equal(info.libraryVersion.minor, g_lib_version_minor);
+	assert_int_equal(info.flags, g_flags);
+	assert_memory_equal(info.manufacturerID, g_man_id, strlen(g_man_id));
+	assert_memory_equal(info.libraryDescription, g_lib_desc,
+			    strlen(g_lib_desc));
 	teardown();
 }
 
-static void test_C_GetInfo_not_initialized(void **state) {
+static void test_C_GetInfo_error_not_initialized(void **state) {
 	// given
 	(void)state;
 	CK_FUNCTION_LIST_PTR pFunctionList = get_function_list_ptr();
@@ -113,11 +115,11 @@ static void test_C_GetInfo_not_initialized(void **state) {
 
 int main(void) {
 	const struct CMUnitTest tests[] = {
-		cmocka_unit_test(test_C_Initialize_success),
-		cmocka_unit_test(test_C_Finalize_success),
-		cmocka_unit_test(test_C_Finalize_not_initialized),
-		cmocka_unit_test(test_C_GetInfo_success),
-		cmocka_unit_test(test_C_GetInfo_not_initialized),
+		cmocka_unit_test(test_C_Initialize_happy_path),
+		cmocka_unit_test(test_C_Finalize_happy_path),
+		cmocka_unit_test(test_C_Finalize_error_not_initialized),
+		cmocka_unit_test(test_C_GetInfo_happy_path),
+		cmocka_unit_test(test_C_GetInfo_error_not_initialized),
 	};
 	return cmocka_run_group_tests(tests, NULL, NULL);
 }

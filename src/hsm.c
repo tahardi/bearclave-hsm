@@ -75,15 +75,12 @@ hsm_error_t hsm_get_lib_desc(unsigned char *lib_desc, size_t lib_desc_len) {
 	// According to pkcs11t.h, it should be blank-space padded.
 	const size_t desc_len = strlen(g_lib_desc);
 	const size_t desc_pad_len = lib_desc_len - desc_len;
-	if (desc_len > lib_desc_len) {
-		return HSM_ERR_INVALID_MAN_ID;
-	}
 	int ret = safe_memcpy(lib_desc, lib_desc_len, g_lib_desc, desc_len);
 	if (ret != SAFE_OK) {
 		return HSM_ERR_MEMCPY;
 	}
-	ret = safe_memset(lib_desc + desc_len, desc_pad_len, g_pad_val,
-			  desc_pad_len);
+	ret = safe_memset(lib_desc + desc_len, desc_pad_len, desc_pad_len,
+			  g_pad_val);
 	if (ret != SAFE_OK) {
 		return HSM_ERR_MEMSET;
 	}
@@ -124,16 +121,13 @@ hsm_error_t hsm_get_man_id(unsigned char *man_id, size_t man_id_len) {
 	// According to pkcs11t.h, it should be blank-space padded.
 	const size_t id_len = strlen(g_man_id);
 	const size_t id_pad_len = man_id_len - id_len;
-	if (id_len > man_id_len) {
-		return HSM_ERR_INVALID_MAN_ID;
-	}
 	int ret = safe_memcpy(man_id, man_id_len, g_man_id, id_len);
 	if (ret != SAFE_OK) {
-		return HSM_ERR_MEMCPY;
+		return ret;
 	}
-	ret = safe_memset(man_id + id_len, id_pad_len, g_pad_val, id_pad_len);
+	ret = safe_memset(man_id + id_len, id_pad_len, id_pad_len, g_pad_val);
 	if (ret != SAFE_OK) {
-		return HSM_ERR_MEMSET;
+		return ret;
 	}
 	return HSM_OK;
 }
