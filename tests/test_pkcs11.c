@@ -1,12 +1,12 @@
-#include <cmocka.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdlib.h>
-
 #include "bearclave/pkcs11.h"
 
-// Test: C_GetFunctionList should return a valid function list
+#include <setjmp.h> // NOLINT
+#include <stdarg.h> // NOLINT
+#include <stddef.h> // NOLINT
+#include <stdlib.h>
+
+#include <cmocka.h>
+
 static void test_C_GetFunctionList_success(void **state) {
 	(void)state;
 
@@ -19,7 +19,6 @@ static void test_C_GetFunctionList_success(void **state) {
 	assert_int_equal(pFunctionList->version.minor, 0);
 }
 
-// Test: C_GetFunctionList with NULL pointer should fail
 static void test_C_GetFunctionList_null_pointer(void **state) {
 	(void)state;
 

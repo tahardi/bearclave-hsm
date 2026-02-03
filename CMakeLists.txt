@@ -36,6 +36,7 @@ endif()
 include_directories(include/)
 include_directories(third_party/)
 set(PKCS11_SOURCES
+        src/hsm.h
         src/hsm.c
         src/pkcs11.c
         src/pkcs11_decrypt.c
@@ -51,6 +52,8 @@ set(PKCS11_SOURCES
         src/pkcs11_sign.c
         src/pkcs11_slot_token.c
         src/pkcs11_verify.c
+        src/safe.h
+        src/safe.c
 )
 add_library(bearclave-hsm ${PKCS11_SOURCES})
 target_include_directories(bearclave-hsm
@@ -60,6 +63,15 @@ target_include_directories(bearclave-hsm
 
 enable_testing()
 find_package(cmocka REQUIRED)
+
 add_executable(test_pkcs11 tests/test_pkcs11.c)
 target_link_libraries(test_pkcs11 bearclave-hsm cmocka::cmocka)
 add_test(NAME pkcs11_tests COMMAND test_pkcs11)
+
+add_executable(test_pkcs11_general tests/test_pkcs11_general.c)
+target_link_libraries(test_pkcs11_general bearclave-hsm cmocka::cmocka)
+add_test(NAME pkcs11_general_tests COMMAND test_pkcs11_general)
+
+add_executable(test_safe tests/test_safe.c)
+target_link_libraries(test_safe bearclave-hsm cmocka::cmocka)
+add_test(NAME safe_tests COMMAND test_safe)

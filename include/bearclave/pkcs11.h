@@ -29,6 +29,14 @@
 #define NULL_PTR 0
 #endif
 
+#ifndef LIBRARY_DESCRIPTION
+#define LIBRARY_DESCRIPTION_SIZE 32
+#endif
+
+#ifndef MANUFACTURER_ID_SIZE
+#define MANUFACTURER_ID_SIZE 32
+#endif
+
 #include "pkcs11/pkcs11.h"
 
 #endif // BEARCLAVE_PKCS11_H
