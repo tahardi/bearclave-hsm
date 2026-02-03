@@ -33,7 +33,7 @@ fmt:
 		$(test_files)
 
 .PHONY: lint
-lint:
+lint: build
 	@clang-tidy \
 		--config-file .clang-tidy \
 		--quiet \
