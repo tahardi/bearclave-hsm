@@ -23,8 +23,7 @@ build: $(default_build)
 
 .PHONY: build-%
 build-%:
-	@cmake --preset $*
-	@cmake --build --preset build-$*
+	@cmake --preset $* && cmake --build --preset build-$*
 
 .PHONY: fmt
 fmt:
@@ -34,7 +33,7 @@ fmt:
 		$(test_files)
 
 .PHONY: lint
-lint:
+lint: build
 	@clang-tidy \
 		--config-file .clang-tidy \
 		--quiet \
