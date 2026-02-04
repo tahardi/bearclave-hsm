@@ -11,9 +11,9 @@ include_dir=./include
 src_dir=./src
 test_dir=./tests
 
-header_files := $(shell find $(include_dir) -name '*.h')
-source_files := $(shell find $(src_dir) -name '*.c')
-test_files := $(shell find $(test_dir) -name '*.c')
+include_files := $(shell find $(include_dir) -name '*.h')
+source_files := $(shell find $(src_dir) -name '*.[ch]')
+test_files := $(shell find $(test_dir) -name '*.[ch]')
 
 .PHONY: pre-pr
 pre-pr: fmt lint test
@@ -28,7 +28,7 @@ build-%:
 .PHONY: fmt
 fmt:
 	@clang-format -i \
-		$(header_files) \
+		$(include_files) \
 		$(source_files) \
 		$(test_files)
 
