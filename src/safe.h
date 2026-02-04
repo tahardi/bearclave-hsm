@@ -11,6 +11,9 @@ typedef enum {
 
 safe_error_t safe_memcpy(void *dst, size_t dst_len, const void *src,
 			 size_t src_len);
+safe_error_t safe_memcpy_with_padding(void *dst, size_t dst_len,
+				      const void *src, size_t src_len,
+				      unsigned char padding);
 safe_error_t safe_memset(void *arr, size_t arr_len, size_t count,
 			 unsigned char val);
 

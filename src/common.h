@@ -15,8 +15,12 @@
 #define LIB_VERSION_MINOR '1'
 #define MAN_ID "Bearclave"
 #define MAN_ID_SIZE 32
+#define MODEL_SIZE 16
 #define PAD_VAL ' '
+#define SERIAL_SIZE 16
 #define SLOT_DESC_SIZE 64
+#define TIME_SIZE 16
+#define TOKEN_LABEL_SIZE 32
 // NOLINTEND
 
 typedef struct version {

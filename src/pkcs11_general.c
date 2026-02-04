@@ -25,8 +25,8 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo) {
 	}
 
 	hsm_info_t hsm_info;
-	int ret = hsm_get_info(&hsm_info);
-	if (ret != HSM_OK) {
+	int err = hsm_get_info(&hsm_info);
+	if (err != HSM_OK) {
 		return CKR_DEVICE_ERROR;
 	}
 	pInfo->cryptokiVersion.major = hsm_info.ck_version.major;
@@ -35,16 +35,16 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo) {
 	pInfo->libraryVersion.minor = hsm_info.lib_version.minor;
 	pInfo->flags = hsm_info.flags;
 
-	ret = safe_memcpy(pInfo->manufacturerID, sizeof(pInfo->manufacturerID),
+	err = safe_memcpy(pInfo->manufacturerID, sizeof(pInfo->manufacturerID),
 			  hsm_info.man_id, sizeof(hsm_info.man_id));
-	if (ret != SAFE_OK) {
+	if (err != SAFE_OK) {
 		return CKR_DEVICE_ERROR;
 	}
 
-	ret = safe_memcpy(pInfo->libraryDescription,
+	err = safe_memcpy(pInfo->libraryDescription,
 			  sizeof(pInfo->libraryDescription), hsm_info.lib_desc,
 			  sizeof(hsm_info.lib_desc));
-	if (ret != SAFE_OK) {
+	if (err != SAFE_OK) {
 		return CKR_DEVICE_ERROR;
 	}
 	return CKR_OK;

@@ -3,12 +3,14 @@
 #include "slot.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 
 typedef struct hsm {
 	bool initialized;
 
-	slot_t *slots;
+	slot_t **slots;
+	uint8_t slots_len;
 } hsm_t;
 
 hsm_t g_hsm = {.initialized = false};
@@ -17,7 +19,10 @@ hsm_error_t hsm_initialize(void) {
 	if (g_hsm.initialized) {
 		return HSM_OK;
 	}
+
 	g_hsm.initialized = true;
+	g_hsm.slots = NULL;
+	g_hsm.slots_len = 0;
 	return HSM_OK;
 }
 
@@ -43,30 +48,62 @@ hsm_error_t hsm_get_info(hsm_info_t *info) {
 	info->lib_version.minor = LIB_VERSION_MINOR;
 	info->flags = FLAGS;
 
-	// Note that pkcs11t.h states the strings must be blank space padded.
-	const size_t desc_len = strlen(LIB_DESC);
-	const size_t desc_pad_len = sizeof(info->lib_desc) - desc_len;
-	int ret = safe_memcpy(info->lib_desc, sizeof(info->lib_desc), LIB_DESC,
-			      desc_len);
-	if (ret != SAFE_OK) {
-		return HSM_ERR_MEMCPY;
-	}
-	ret = safe_memset(info->lib_desc + desc_len, desc_pad_len, desc_pad_len,
-			  PAD_VAL);
-	if (ret != SAFE_OK) {
-		return HSM_ERR_MEMSET;
+	unsigned char *dst = info->lib_desc;
+	unsigned char *src = (unsigned char *)LIB_DESC;
+	size_t dst_len = sizeof(info->lib_desc);
+	size_t src_len = strlen(LIB_DESC);
+	int err = safe_memcpy_with_padding(dst, dst_len, src, src_len, PAD_VAL);
+	if (err != SAFE_OK) {
+		return err;
 	}
 
-	const size_t id_len = strlen(MAN_ID);
-	const size_t id_pad_len = sizeof(info->man_id) - id_len;
-	ret = safe_memcpy(info->man_id, sizeof(info->man_id), MAN_ID, id_len);
-	if (ret != SAFE_OK) {
-		return ret;
+	dst = info->man_id;
+	src = (unsigned char *)MAN_ID;
+	dst_len = sizeof(info->man_id);
+	src_len = strlen(MAN_ID);
+	err = safe_memcpy_with_padding(dst, dst_len, src, src_len, PAD_VAL);
+	if (err != SAFE_OK) {
+		return err;
 	}
-	ret = safe_memset(info->man_id + id_len, id_pad_len, id_pad_len,
-			  PAD_VAL);
-	if (ret != SAFE_OK) {
-		return ret;
+	return HSM_OK;
+}
+
+hsm_error_t hsm_get_slot_len(bool tokenPresent, unsigned long *slot_count) {
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
+	}
+	if (slot_count == NULL) {
+		return HSM_ERR_BAD_ARGS;
+	}
+
+	unsigned long slots_len = 0;
+	for (size_t i = 0; i < g_hsm.slots_len; i++) {
+		if (slot_has_token(g_hsm.slots[i]) && tokenPresent) {
+			slots_len++;
+		}
+	}
+	*slot_count = slots_len;
+	return HSM_OK;
+}
+
+hsm_error_t hsm_get_slot_list(bool tokenPresent, unsigned long *slot_list,
+			      unsigned long slot_count) {
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
+	}
+	if (slot_list == NULL || slot_count > g_hsm.slots_len) {
+		return HSM_ERR_BAD_ARGS;
+	}
+
+	for (size_t i = 0; i < g_hsm.slots_len; i++) {
+		if (slot_has_token(g_hsm.slots[i]) && tokenPresent) {
+			unsigned long slot_id;
+			int err = slot_get_id(g_hsm.slots[i], &slot_id);
+			if (err != SLOT_OK) {
+				return err;
+			}
+			slot_list[i] = slot_id;
+		}
 	}
 	return HSM_OK;
 }

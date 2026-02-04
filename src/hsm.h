@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include <stdbool.h>
+
 typedef struct hsm hsm_t;
 
 typedef struct {
@@ -26,5 +28,8 @@ extern hsm_t g_hsm;
 hsm_error_t hsm_initialize(void);
 hsm_error_t hsm_finalize(void);
 hsm_error_t hsm_get_info(hsm_info_t *info);
+hsm_error_t hsm_get_slot_len(bool tokenPresent, unsigned long *slot_count);
+hsm_error_t hsm_get_slot_list(bool tokenPresent, unsigned long *slot_list,
+			      unsigned long slot_count);
 
 #endif // BEARCLAVE_HSM_H
