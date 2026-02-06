@@ -1,5 +1,4 @@
 #include "../src/common.h"
-#include "../src/hsm.h"
 #include "bearclave/pkcs11.h"
 
 #include <setjmp.h> // NOLINT

@@ -42,6 +42,9 @@ void slot_free(slot_t *slot) {
 	if (slot == NULL) {
 		return;
 	}
+	if (slot->info != NULL) {
+		free(slot->info);
+	}
 	free(slot);
 }
 
@@ -76,5 +79,13 @@ slot_error_t slot_get_id(slot_t *slot, unsigned long *slot_id) {
 		return SLOT_ERR_BAD_ARGS;
 	}
 	*slot_id = slot->slot_id;
+	return SLOT_OK;
+}
+
+slot_error_t slot_get_token(slot_t *slot, token_t **token) {
+	if (slot == NULL || token == NULL) {
+		return SLOT_ERR_BAD_ARGS;
+	}
+	*token = slot->token;
 	return SLOT_OK;
 }

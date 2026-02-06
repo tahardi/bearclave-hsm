@@ -59,6 +59,18 @@ hsm_error_t hsm_finalize(void) {
 	if (!g_hsm.initialized) {
 		return HSM_ERR_NOT_INITIALIZED;
 	}
+
+	if (g_hsm.info != NULL) {
+		free(g_hsm.info);
+	}
+
+	for (size_t i = 0; i < g_hsm.slots_len; i++) {
+		slot_free(g_hsm.slots[i]);
+	}
+	if (g_hsm.slots != NULL) {
+		free((void *)g_hsm.slots);
+	}
+
 	g_hsm.initialized = false;
 	return HSM_OK;
 }
@@ -160,7 +172,7 @@ hsm_error_t hsm_get_slots_len(bool tokenPresent, unsigned long *slots_len) {
 
 	unsigned long len = 0;
 	for (size_t i = 0; i < g_hsm.slots_len; i++) {
-		if (slot_has_token(g_hsm.slots[i]) && tokenPresent) {
+		if (slot_has_token(g_hsm.slots[i]) == tokenPresent) {
 			len++;
 		}
 	}

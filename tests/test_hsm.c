@@ -65,8 +65,8 @@ static void test_hsm_get_info_happy_path(void **state) {
 	assert_int_equal(hsm_info.lib_version.major, LIB_VERSION_MAJOR);
 	assert_int_equal(hsm_info.lib_version.minor, LIB_VERSION_MINOR);
 	assert_int_equal(hsm_info.flags, FLAGS);
-	assert_memory_equal(hsm_info.lib_desc, LIB_DESC, sizeof(LIB_DESC));
-	assert_memory_equal(hsm_info.man_id, MAN_ID, sizeof(MAN_ID));
+	assert_memory_equal(hsm_info.lib_desc, LIB_DESC, strlen(LIB_DESC));
+	assert_memory_equal(hsm_info.man_id, MAN_ID, strlen(MAN_ID));
 	teardown();
 }
 
@@ -129,6 +129,7 @@ static void test_hsm_add_slot_happy_path(void **state) {
 	err = hsm_get_slots_len(false, &slots_len);
 	assert_int_equal(err, HSM_OK);
 	assert_int_equal(slots_len, 1);
+	teardown();
 }
 
 static void test_hsm_add_slot_error_already_exists(void **state) {
@@ -170,6 +171,7 @@ static void test_hsm_add_slot_error_already_exists(void **state) {
 	err = hsm_get_slots_len(false, &slots_len);
 	assert_int_equal(err, HSM_OK);
 	assert_int_equal(slots_len, 1);
+	teardown();
 }
 
 int main(void) {
