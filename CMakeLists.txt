@@ -37,7 +37,7 @@ include_directories(include/)
 include_directories(third_party/)
 set(PKCS11_SOURCES
         src/hsm.c
-        src/mechanism.c
+        src/mech.c
         src/pkcs11.c
         src/pkcs11_decrypt.c
         src/pkcs11_digest.c
