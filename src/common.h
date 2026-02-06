@@ -17,7 +17,7 @@
 #define MAN_ID "Bearclave"
 #define MAN_ID_SIZE 32
 #define MECH_MAX_KEY_SIZE 4096
-#define MECH_MIN_KEY_SIZE 2048
+#define MECH_MIN_KEY_SIZE 128
 #define MODEL_SIZE 16
 #define PAD_VAL ' '
 #define SERIAL_SIZE 16
