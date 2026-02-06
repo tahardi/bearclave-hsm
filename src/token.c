@@ -45,7 +45,8 @@ token_t *token_new(unsigned char man_id[MAN_ID_LEN],
 		return NULL;
 	}
 
-	err = safe_memcpy(token->info->model, TOKEN_MODEL_LEN, model, TOKEN_MODEL_LEN);
+	err = safe_memcpy(token->info->model, TOKEN_MODEL_LEN, model,
+			  TOKEN_MODEL_LEN);
 	if (err != SAFE_OK) {
 		free(token);
 		return NULL;
@@ -61,6 +62,8 @@ token_t *token_new(unsigned char man_id[MAN_ID_LEN],
 	token->initialized = false;
 	token->mechs = NULL;
 	token->mechs_len = 0;
+	token->so_pin = NULL;
+	token->so_pin_len = 0;
 	token->info->flags = 0;
 	token->info->ulMaxSessionCount = TOKEN_MAX_SESSIONS;
 	token->info->ulSessionCount = 0;
@@ -81,26 +84,30 @@ void token_free(token_t *token) {
 		return;
 	}
 
+	if (token->info != NULL) {
+		free(token->info);
+	}
+
 	if (token->so_pin != NULL) {
 		free(token->so_pin);
 	}
 
-	for (size_t i = 0; i < token->mechs_len; i++) {
-		mech_free(token->mechs[i]);
-	}
 	if (token->mechs != NULL) {
 		free((void *)token->mechs);
 	}
 	free(token);
 }
 
-token_error_t token_initialize(token_t *token, unsigned char label[TOKEN_LABEL_LEN],
-			 unsigned char *so_pin, unsigned long so_pin_len) {
+token_error_t token_initialize(token_t *token,
+			       unsigned char label[TOKEN_LABEL_LEN],
+			       unsigned char *so_pin,
+			       unsigned long so_pin_len) {
 	if (token == NULL || label == NULL || so_pin == NULL) {
 		return TOKEN_ERR_BAD_ARGS;
 	}
 
-	int err = safe_memcpy(label, TOKEN_LABEL_LEN, label, TOKEN_LABEL_LEN);
+	int err = safe_memcpy(token->info->label, TOKEN_LABEL_LEN, label,
+			      TOKEN_LABEL_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
@@ -195,8 +202,8 @@ token_error_t token_add_mech(token_t *token, mech_t *mech) {
 	}
 
 	token->mechs_len++;
-	mech_t **new_mechs = (mech_t **) realloc((void *) token->mechs,
-		token->mechs_len * sizeof(mech_t *));
+	mech_t **new_mechs = (mech_t **)realloc(
+		(void *)token->mechs, token->mechs_len * sizeof(mech_t *));
 	if (new_mechs == NULL) {
 		token->mechs_len--;
 		return TOKEN_ERR_MEMORY;
@@ -249,7 +256,7 @@ token_error_t token_get_mech_list(token_t *token, unsigned long *mech_list,
 		return TOKEN_ERR_NOT_INITIALIZED;
 	}
 	if (mechs_len != token->mechs_len) {
-		return TOKEN_ERR_BAD_ARGS;
+		return TOKEN_ERR_OVERFLOW;
 	}
 
 	for (size_t i = 0; i < token->mechs_len; i++) {
@@ -263,7 +270,8 @@ token_error_t token_get_mech_list(token_t *token, unsigned long *mech_list,
 	return TOKEN_OK;
 }
 
-token_error_t token_get_so_pin(token_t *token, unsigned char **so_pin, unsigned long *so_pin_len) {
+token_error_t token_get_so_pin(token_t *token, unsigned char **so_pin,
+			       unsigned long *so_pin_len) {
 	if (token == NULL || so_pin == NULL || so_pin_len == NULL) {
 		return TOKEN_ERR_BAD_ARGS;
 	}

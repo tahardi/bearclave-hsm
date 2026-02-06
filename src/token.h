@@ -50,6 +50,7 @@ typedef enum {
 	TOKEN_ERR_MECH_ALREADY_EXISTS,
 	TOKEN_ERR_MEMORY,
 	TOKEN_ERR_NOT_INITIALIZED,
+	TOKEN_ERR_OVERFLOW,
 	TOKEN_ERR_SAFE
 } token_error_t;
 
@@ -59,8 +60,9 @@ token_t *token_new(unsigned char man_id[MAN_ID_LEN],
 		   version_t hw_version);
 void token_free(token_t *token);
 
-token_error_t token_initialize(token_t *token, unsigned char label[TOKEN_LABEL_LEN],
-			 unsigned char *so_pin, unsigned long so_pin_len);
+token_error_t token_initialize(token_t *token,
+			       unsigned char label[TOKEN_LABEL_LEN],
+			       unsigned char *so_pin, unsigned long so_pin_len);
 token_error_t token_get_info(token_t *token, token_info_t *info);
 token_error_t token_add_mech(token_t *token, mech_t *mech);
 token_error_t token_get_mech(token_t *token, unsigned long mech_type,
@@ -69,6 +71,6 @@ token_error_t token_get_mechs_len(token_t *token, unsigned long *mechs_len);
 token_error_t token_get_mech_list(token_t *token, unsigned long *mech_list,
 				  unsigned long mechs_len);
 token_error_t token_get_so_pin(token_t *token, unsigned char **so_pin,
-			      unsigned long *so_pin_len);
+			       unsigned long *so_pin_len);
 
 #endif // BEARCLAVE_TOKEN_H
