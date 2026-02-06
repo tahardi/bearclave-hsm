@@ -84,3 +84,7 @@ add_test(NAME pkcs11_general_tests COMMAND test_pkcs11_general)
 add_executable(test_safe tests/test_safe.c)
 target_link_libraries(test_safe bearclave-hsm cmocka::cmocka)
 add_test(NAME safe_tests COMMAND test_safe)
+
+add_executable(test_token tests/test_token.c)
+target_link_libraries(test_token bearclave-hsm cmocka::cmocka)
+add_test(NAME token_tests COMMAND test_token)
