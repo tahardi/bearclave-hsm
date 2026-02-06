@@ -1,6 +1,7 @@
 #include "token.h"
 
 #include "hsm.h"
+#include "mech.h"
 #include "safe.h"
 
 #include <stdbool.h>
@@ -18,9 +19,9 @@ typedef struct token {
 	unsigned long so_pin_len;
 } token_t;
 
-token_t *token_new(unsigned char man_id[MAN_ID_SIZE],
-		   unsigned char model[MODEL_SIZE],
-		   unsigned char serial[SERIAL_SIZE], version_t fw_version,
+token_t *token_new(unsigned char man_id[MAN_ID_LEN],
+		   unsigned char model[TOKEN_MODEL_LEN],
+		   unsigned char serial[TOKEN_SERIAL_LEN], version_t fw_version,
 		   version_t hw_version) {
 	if (man_id == NULL || model == NULL || serial == NULL) {
 		return NULL;
@@ -37,7 +38,29 @@ token_t *token_new(unsigned char man_id[MAN_ID_SIZE],
 		return NULL;
 	}
 
+	int err = safe_memcpy(token->info->man_id, MAN_ID_LEN, man_id,
+			      MAN_ID_LEN);
+	if (err != SAFE_OK) {
+		free(token);
+		return NULL;
+	}
+
+	err = safe_memcpy(token->info->model, TOKEN_MODEL_LEN, model, TOKEN_MODEL_LEN);
+	if (err != SAFE_OK) {
+		free(token);
+		return NULL;
+	}
+
+	err = safe_memcpy(token->info->serial, TOKEN_SERIAL_LEN, serial,
+			  TOKEN_SERIAL_LEN);
+	if (err != SAFE_OK) {
+		free(token);
+		return NULL;
+	}
+
 	token->initialized = false;
+	token->mechs = NULL;
+	token->mechs_len = 0;
 	token->info->flags = 0;
 	token->info->ulMaxSessionCount = TOKEN_MAX_SESSIONS;
 	token->info->ulSessionCount = 0;
@@ -50,26 +73,6 @@ token_t *token_new(unsigned char man_id[MAN_ID_SIZE],
 	token->info->ulFreePrivateMemory = TOKEN_TOTAL_PRIVATE_MEMORY;
 	token->info->fw_version = fw_version;
 	token->info->hw_version = hw_version;
-
-	int err = safe_memcpy(token->info->man_id, MAN_ID_SIZE, man_id,
-			      MAN_ID_SIZE);
-	if (err != SAFE_OK) {
-		free(token);
-		return NULL;
-	}
-
-	err = safe_memcpy(token->info->model, MODEL_SIZE, model, MODEL_SIZE);
-	if (err != SAFE_OK) {
-		free(token);
-		return NULL;
-	}
-
-	err = safe_memcpy(token->info->serial, SERIAL_SIZE, serial,
-			  SERIAL_SIZE);
-	if (err != SAFE_OK) {
-		free(token);
-		return NULL;
-	}
 	return token;
 }
 
@@ -88,17 +91,16 @@ void token_free(token_t *token) {
 	if (token->mechs != NULL) {
 		free((void *)token->mechs);
 	}
-
 	free(token);
 }
 
-token_error_t token_init(token_t *token, unsigned char label[LABEL_SIZE],
-			 unsigned char *pin, unsigned long pin_len) {
-	if (token == NULL || pin == NULL) {
+token_error_t token_initialize(token_t *token, unsigned char label[TOKEN_LABEL_LEN],
+			 unsigned char *so_pin, unsigned long so_pin_len) {
+	if (token == NULL || label == NULL || so_pin == NULL) {
 		return TOKEN_ERR_BAD_ARGS;
 	}
 
-	int err = safe_memcpy(label, LABEL_SIZE, label, LABEL_SIZE);
+	int err = safe_memcpy(label, TOKEN_LABEL_LEN, label, TOKEN_LABEL_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
@@ -107,12 +109,12 @@ token_error_t token_init(token_t *token, unsigned char label[LABEL_SIZE],
 		free(token->so_pin);
 	}
 
-	token->so_pin = malloc(pin_len);
-	err = safe_memcpy(token->so_pin, pin_len, pin, pin_len);
+	token->so_pin = malloc(so_pin_len);
+	err = safe_memcpy(token->so_pin, so_pin_len, so_pin, so_pin_len);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
-	token->so_pin_len = pin_len;
+	token->so_pin_len = so_pin_len;
 	token->initialized = true;
 	return TOKEN_OK;
 }
@@ -139,35 +141,68 @@ token_error_t token_get_info(token_t *token, token_info_t *info) {
 	info->fw_version = token->info->fw_version;
 	info->hw_version = token->info->hw_version;
 
-	int err = safe_memcpy(info->label, LABEL_SIZE, token->info->label,
-			      LABEL_SIZE);
+	int err = safe_memcpy(info->label, TOKEN_LABEL_LEN, token->info->label,
+			      TOKEN_LABEL_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
 
-	err = safe_memcpy(info->man_id, MAN_ID_SIZE, token->info->man_id,
-			  MAN_ID_SIZE);
+	err = safe_memcpy(info->man_id, MAN_ID_LEN, token->info->man_id,
+			  MAN_ID_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
 
-	err = safe_memcpy(info->model, MODEL_SIZE, token->info->model,
-			  MODEL_SIZE);
+	err = safe_memcpy(info->model, TOKEN_MODEL_LEN, token->info->model,
+			  TOKEN_MODEL_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
 
-	err = safe_memcpy(info->serial, SERIAL_SIZE, token->info->serial,
-			  SERIAL_SIZE);
+	err = safe_memcpy(info->serial, TOKEN_SERIAL_LEN, token->info->serial,
+			  TOKEN_SERIAL_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
 
-	err = safe_memcpy(info->utc_time, TIME_SIZE, token->info->utc_time,
-			  TIME_SIZE);
+	// TODO: Get wallclock time
+	err = safe_memcpy(info->utc_time, TOKEN_TIME_LEN, token->info->utc_time,
+			  TOKEN_TIME_LEN);
 	if (err != SAFE_OK) {
 		return TOKEN_ERR_SAFE;
 	}
+	return TOKEN_OK;
+}
+
+token_error_t token_add_mech(token_t *token, mech_t *mech) {
+	if (token == NULL || mech == NULL) {
+		return TOKEN_ERR_BAD_ARGS;
+	}
+	if (!token->initialized) {
+		return TOKEN_ERR_NOT_INITIALIZED;
+	}
+
+	mech_info_t mech_info;
+	int err = mech_get_info(mech, &mech_info);
+	if (err != MECH_OK) {
+		return TOKEN_ERR_MECH;
+	}
+
+	mech_t *existing_mech;
+	err = token_get_mech(token, mech_info.type, &existing_mech);
+	if (err != TOKEN_ERR_MECH_NOT_FOUND) {
+		return TOKEN_ERR_MECH_ALREADY_EXISTS;
+	}
+
+	token->mechs_len++;
+	mech_t **new_mechs = (mech_t **) realloc((void *) token->mechs,
+		token->mechs_len * sizeof(mech_t *));
+	if (new_mechs == NULL) {
+		token->mechs_len--;
+		return TOKEN_ERR_MEMORY;
+	}
+	token->mechs = new_mechs;
+	token->mechs[token->mechs_len - 1] = mech;
 	return TOKEN_OK;
 }
 
@@ -225,5 +260,17 @@ token_error_t token_get_mech_list(token_t *token, unsigned long *mech_list,
 		}
 		mech_list[i] = info.type;
 	}
+	return TOKEN_OK;
+}
+
+token_error_t token_get_so_pin(token_t *token, unsigned char **so_pin, unsigned long *so_pin_len) {
+	if (token == NULL || so_pin == NULL || so_pin_len == NULL) {
+		return TOKEN_ERR_BAD_ARGS;
+	}
+	if (!token->initialized) {
+		return TOKEN_ERR_NOT_INITIALIZED;
+	}
+	*so_pin = token->so_pin;
+	*so_pin_len = token->so_pin_len;
 	return TOKEN_OK;
 }
