@@ -12,8 +12,8 @@ typedef struct slot {
 	token_t *token;
 } slot_t;
 
-slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_SIZE],
-		 unsigned char man_id[MAN_ID_SIZE]) {
+slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_LEN],
+		 unsigned char man_id[MAN_ID_LEN]) {
 	slot_t *slot = malloc(sizeof(slot_t));
 	if (slot == NULL) {
 		return NULL;
@@ -32,9 +32,8 @@ slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_SIZE],
 	slot->info->fw_version.minor = FW_VERSION_MINOR;
 	slot->info->hw_version.major = HW_VERSION_MAJOR;
 	slot->info->hw_version.minor = HW_VERSION_MINOR;
-	safe_memcpy(slot->info->slot_desc, SLOT_DESC_SIZE, desc,
-		    SLOT_DESC_SIZE);
-	safe_memcpy(slot->info->man_id, MAN_ID_SIZE, man_id, MAN_ID_SIZE);
+	safe_memcpy(slot->info->slot_desc, SLOT_DESC_LEN, desc, SLOT_DESC_LEN);
+	safe_memcpy(slot->info->man_id, MAN_ID_LEN, man_id, MAN_ID_LEN);
 	return slot;
 }
 
@@ -61,13 +60,13 @@ slot_error_t slot_get_info(slot_t *slot, slot_info_t *info) {
 	info->fw_version = slot->info->fw_version;
 	info->hw_version = slot->info->hw_version;
 
-	int err = safe_memcpy(info->man_id, MAN_ID_SIZE, slot->info->man_id,
-			      MAN_ID_SIZE);
+	int err = safe_memcpy(info->man_id, MAN_ID_LEN, slot->info->man_id,
+			      MAN_ID_LEN);
 	if (err != SAFE_OK) {
 		return err;
 	}
-	err = safe_memcpy(info->slot_desc, SLOT_DESC_SIZE,
-			  slot->info->slot_desc, SLOT_DESC_SIZE);
+	err = safe_memcpy(info->slot_desc, SLOT_DESC_LEN, slot->info->slot_desc,
+			  SLOT_DESC_LEN);
 	if (err != SAFE_OK) {
 		return err;
 	}

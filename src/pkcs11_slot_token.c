@@ -258,7 +258,7 @@ CK_RV C_InitToken(CK_SLOT_ID slotID, CK_UTF8CHAR_PTR pPin, CK_ULONG ulPinLen,
 		return CKR_GENERAL_ERROR;
 	}
 
-	err = token_init(token, pLabel, pPin, ulPinLen);
+	err = token_initialize(token, pLabel, pPin, ulPinLen);
 	if (err != TOKEN_OK) {
 		return CKR_GENERAL_ERROR;
 	}
