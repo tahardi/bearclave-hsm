@@ -16,7 +16,7 @@ source_files := $(shell find $(src_dir) -name '*.[ch]')
 test_files := $(shell find $(test_dir) -name '*.[ch]')
 
 .PHONY: pre-pr
-pre-pr: fmt lint test
+pre-pr: clean fmt lint test
 
 .PHONY: build
 build: $(default_build)
