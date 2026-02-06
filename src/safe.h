@@ -5,8 +5,8 @@
 
 typedef enum {
 	SAFE_OK = 0,
-	SAFE_ERR_NULL_ARGS = 1,
-	SAFE_ERR_OVERFLOW = 2,
+	SAFE_ERR_NULL_ARGS,
+	SAFE_ERR_OVERFLOW,
 } safe_error_t;
 
 safe_error_t safe_memcpy(void *dst, size_t dst_len, const void *src,

@@ -7,31 +7,34 @@
 #include <string.h>
 
 typedef struct slot {
-	unsigned char desc[SLOT_DESC_SIZE];
-	unsigned char manufacturer_id[MAN_ID_SIZE];
-	unsigned long flags;
 	unsigned long slot_id;
-	version_t hw_version;
-	version_t fw_version;
-
+	slot_info_t *info;
 	token_t *token;
 } slot_t;
 
 slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_SIZE],
-		 unsigned char man_id[MAN_ID_SIZE], version_t hw_version,
-		 version_t fw_version) {
+		 unsigned char man_id[MAN_ID_SIZE]) {
 	slot_t *slot = malloc(sizeof(slot_t));
 	if (slot == NULL) {
 		return NULL;
 	}
 
-	slot->token = NULL;
-	slot->flags = 0;
+	slot->info = malloc(sizeof(slot_info_t));
+	if (slot->info == NULL) {
+		free(slot);
+		return NULL;
+	}
+
 	slot->slot_id = slot_id;
-	slot->hw_version = hw_version;
-	slot->fw_version = fw_version;
-	safe_memcpy(slot->desc, SLOT_DESC_SIZE, desc, SLOT_DESC_SIZE);
-	safe_memcpy(slot->manufacturer_id, MAN_ID_SIZE, man_id, MAN_ID_SIZE);
+	slot->token = NULL;
+	slot->info->flags = 0;
+	slot->info->fw_version.major = FW_VERSION_MAJOR;
+	slot->info->fw_version.minor = FW_VERSION_MINOR;
+	slot->info->hw_version.major = HW_VERSION_MAJOR;
+	slot->info->hw_version.minor = HW_VERSION_MINOR;
+	safe_memcpy(slot->info->slot_desc, SLOT_DESC_SIZE, desc,
+		    SLOT_DESC_SIZE);
+	safe_memcpy(slot->info->man_id, MAN_ID_SIZE, man_id, MAN_ID_SIZE);
 	return slot;
 }
 
@@ -51,18 +54,17 @@ slot_error_t slot_get_info(slot_t *slot, slot_info_t *info) {
 		return SLOT_ERR_BAD_ARGS;
 	}
 
-	info->flags = slot->flags;
-	info->fw_version = slot->fw_version;
-	info->hw_version = slot->hw_version;
+	info->flags = slot->info->flags;
+	info->fw_version = slot->info->fw_version;
+	info->hw_version = slot->info->hw_version;
 
-	int err = safe_memcpy(info->man_id, MAN_ID_SIZE, slot->manufacturer_id,
+	int err = safe_memcpy(info->man_id, MAN_ID_SIZE, slot->info->man_id,
 			      MAN_ID_SIZE);
 	if (err != SAFE_OK) {
 		return err;
 	}
-
-	err = safe_memcpy(info->slot_desc, SLOT_DESC_SIZE, slot->desc,
-			  SLOT_DESC_SIZE);
+	err = safe_memcpy(info->slot_desc, SLOT_DESC_SIZE,
+			  slot->info->slot_desc, SLOT_DESC_SIZE);
 	if (err != SAFE_OK) {
 		return err;
 	}
