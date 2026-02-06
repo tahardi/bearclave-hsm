@@ -1,6 +1,11 @@
 #ifndef BEARCLAVE_MECHANISM_H
 #define BEARCLAVE_MECHANISM_H
 
+// NOLINTBEGIN
+#define MECH_MAX_KEY_SIZE 4096
+#define MECH_MIN_KEY_SIZE 128
+// NOLINTEND
+
 typedef struct mech mech_t;
 
 typedef struct {

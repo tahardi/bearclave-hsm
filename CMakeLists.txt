@@ -37,7 +37,7 @@ include_directories(include/)
 include_directories(third_party/)
 set(PKCS11_SOURCES
         src/hsm.c
-        src/mechanism.c
+        src/mech.c
         src/pkcs11.c
         src/pkcs11_decrypt.c
         src/pkcs11_digest.c
@@ -84,3 +84,7 @@ add_test(NAME pkcs11_general_tests COMMAND test_pkcs11_general)
 add_executable(test_safe tests/test_safe.c)
 target_link_libraries(test_safe bearclave-hsm cmocka::cmocka)
 add_test(NAME safe_tests COMMAND test_safe)
+
+add_executable(test_token tests/test_token.c)
+target_link_libraries(test_token bearclave-hsm cmocka::cmocka)
+add_test(NAME token_tests COMMAND test_token)

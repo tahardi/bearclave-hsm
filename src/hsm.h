@@ -9,7 +9,7 @@
 typedef struct hsm hsm_t;
 
 typedef struct {
-	unsigned char man_id[MAN_ID_SIZE];
+	unsigned char man_id[MAN_ID_LEN];
 	unsigned char lib_desc[LIB_DESC_SIZE];
 	unsigned long flags;
 	version_t ck_version;

@@ -1,5 +1,10 @@
 #ifndef BEARCLAVE_SLOT_H
 #define BEARCLAVE_SLOT_H
+
+// NOLINTBEGIN
+#define SLOT_DESC_LEN 64
+// NOLINTEND
+
 #include "common.h"
 #include "token.h"
 
@@ -8,8 +13,8 @@
 typedef struct slot slot_t;
 
 typedef struct {
-	unsigned char man_id[MAN_ID_SIZE];
-	unsigned char slot_desc[SLOT_DESC_SIZE];
+	unsigned char man_id[MAN_ID_LEN];
+	unsigned char slot_desc[SLOT_DESC_LEN];
 	unsigned long flags;
 	version_t fw_version;
 	version_t hw_version;
@@ -20,8 +25,8 @@ typedef enum {
 	SLOT_ERR_BAD_ARGS,
 } slot_error_t;
 
-slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_SIZE],
-		 unsigned char man_id[MAN_ID_SIZE]);
+slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_LEN],
+		 unsigned char man_id[MAN_ID_LEN]);
 void slot_free(slot_t *slot);
 
 bool slot_has_token(slot_t *slot);
