@@ -1,6 +1,7 @@
 // NOLINTBEGIN(readability-non-const-parameter,bugprone-easily-swappable-parameters)
 #include "bearclave/pkcs11.h"
 #include "hsm.h"
+#include "safe.h"
 
 CK_RV C_Initialize(CK_VOID_PTR pInitArgs) {
 	(void)pInitArgs;
@@ -23,37 +24,27 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo) {
 		return CKR_ARGUMENTS_BAD;
 	}
 
-	int ret = hsm_get_ck_version_major(&pInfo->cryptokiVersion.major);
-	if (ret != HSM_OK) {
+	hsm_info_t hsm_info;
+	int err = hsm_get_info(&hsm_info);
+	if (err != HSM_OK) {
 		return CKR_DEVICE_ERROR;
 	}
-	ret = hsm_get_ck_version_minor(&pInfo->cryptokiVersion.minor);
-	if (ret != HSM_OK) {
+	pInfo->cryptokiVersion.major = hsm_info.ck_version.major;
+	pInfo->cryptokiVersion.minor = hsm_info.ck_version.minor;
+	pInfo->libraryVersion.major = hsm_info.lib_version.major;
+	pInfo->libraryVersion.minor = hsm_info.lib_version.minor;
+	pInfo->flags = hsm_info.flags;
+
+	err = safe_memcpy(pInfo->manufacturerID, sizeof(pInfo->manufacturerID),
+			  hsm_info.man_id, sizeof(hsm_info.man_id));
+	if (err != SAFE_OK) {
 		return CKR_DEVICE_ERROR;
 	}
 
-	ret = hsm_get_flags(&pInfo->flags);
-	if (ret != HSM_OK) {
-		return CKR_DEVICE_ERROR;
-	}
-
-	ret = hsm_get_lib_version_major(&pInfo->libraryVersion.major);
-	if (ret != HSM_OK) {
-		return CKR_DEVICE_ERROR;
-	}
-	ret = hsm_get_lib_version_minor(&pInfo->libraryVersion.minor);
-	if (ret != HSM_OK) {
-		return CKR_DEVICE_ERROR;
-	}
-
-	ret = hsm_get_lib_desc(pInfo->libraryDescription,
-			       LIBRARY_DESCRIPTION_SIZE);
-	if (ret != HSM_OK) {
-		return CKR_DEVICE_ERROR;
-	}
-
-	ret = hsm_get_man_id(pInfo->manufacturerID, MANUFACTURER_ID_SIZE);
-	if (ret != HSM_OK) {
+	err = safe_memcpy(pInfo->libraryDescription,
+			  sizeof(pInfo->libraryDescription), hsm_info.lib_desc,
+			  sizeof(hsm_info.lib_desc));
+	if (err != SAFE_OK) {
 		return CKR_DEVICE_ERROR;
 	}
 	return CKR_OK;

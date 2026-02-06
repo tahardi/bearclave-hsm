@@ -36,8 +36,8 @@ endif()
 include_directories(include/)
 include_directories(third_party/)
 set(PKCS11_SOURCES
-        src/hsm.h
         src/hsm.c
+        src/mechanism.c
         src/pkcs11.c
         src/pkcs11_decrypt.c
         src/pkcs11_digest.c
@@ -52,8 +52,9 @@ set(PKCS11_SOURCES
         src/pkcs11_sign.c
         src/pkcs11_slot_token.c
         src/pkcs11_verify.c
-        src/safe.h
         src/safe.c
+        src/slot.c
+        src/token.c
 )
 add_library(bearclave-hsm ${PKCS11_SOURCES})
 target_include_directories(bearclave-hsm

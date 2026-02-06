@@ -17,6 +17,23 @@ safe_error_t safe_memcpy(void *dst, size_t dst_len, const void *src,
 	return SAFE_OK;
 }
 
+safe_error_t safe_memcpy_with_padding(void *dst, size_t dst_len,
+				      const void *src, size_t src_len,
+				      unsigned char padding) {
+	if (dst == NULL || src == NULL) {
+		return SAFE_ERR_NULL_ARGS;
+	}
+	if (dst_len < src_len) {
+		return SAFE_ERR_OVERFLOW;
+	}
+
+	unsigned char *dst_bytes = (unsigned char *)dst;
+	safe_memcpy(dst_bytes, dst_len, src, src_len);
+	safe_memset(dst_bytes + src_len, dst_len - src_len, dst_len - src_len,
+		    padding);
+	return SAFE_OK;
+}
+
 // NOLINTBEGIN(bugprone-easily-swappable-parameters)
 safe_error_t safe_memset(void *arr, size_t arr_len, size_t count,
 			 unsigned char val) {

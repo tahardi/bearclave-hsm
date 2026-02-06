@@ -1,4 +1,4 @@
-#include "../src/hsm.h"
+#include "../src/common.h"
 #include "bearclave/pkcs11.h"
 
 #include <setjmp.h> // NOLINT
@@ -88,14 +88,14 @@ static void test_C_GetInfo_happy_path(void **state) {
 
 	// then
 	assert_int_equal(rv, CKR_OK);
-	assert_int_equal(info.cryptokiVersion.major, g_ck_version_major);
-	assert_int_equal(info.cryptokiVersion.minor, g_ck_version_minor);
-	assert_int_equal(info.libraryVersion.major, g_lib_version_major);
-	assert_int_equal(info.libraryVersion.minor, g_lib_version_minor);
-	assert_int_equal(info.flags, g_flags);
-	assert_memory_equal(info.manufacturerID, g_man_id, strlen(g_man_id));
-	assert_memory_equal(info.libraryDescription, g_lib_desc,
-			    strlen(g_lib_desc));
+	assert_int_equal(info.cryptokiVersion.major, CK_VERSION_MAJOR);
+	assert_int_equal(info.cryptokiVersion.minor, CK_VERSION_MINOR);
+	assert_int_equal(info.libraryVersion.major, LIB_VERSION_MAJOR);
+	assert_int_equal(info.libraryVersion.minor, LIB_VERSION_MINOR);
+	assert_int_equal(info.flags, FLAGS);
+	assert_memory_equal(info.manufacturerID, MAN_ID, strlen(MAN_ID));
+	assert_memory_equal(info.libraryDescription, LIB_DESC,
+			    strlen(LIB_DESC));
 	teardown();
 }
 
