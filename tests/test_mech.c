@@ -1,4 +1,3 @@
-#include "../src/common.h"
 #include "../src/hsm.h"
 
 #include <setjmp.h> // NOLINT

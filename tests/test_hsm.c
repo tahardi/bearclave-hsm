@@ -1,7 +1,6 @@
 #include "../src/common.h"
 #include "../src/hsm.h"
 #include "../src/safe.h"
-#include "bearclave/pkcs11.h"
 
 #include <setjmp.h> // NOLINT
 #include <stdarg.h> // NOLINT
@@ -102,8 +101,8 @@ static void test_hsm_add_slot_happy_path(void **state) {
 	setup();
 
 	unsigned long slot_id = 8;
-	unsigned char slot_desc[SLOT_DESC_SIZE];
-	int err = safe_memcpy_with_padding(slot_desc, SLOT_DESC_SIZE,
+	unsigned char slot_desc[SLOT_DESC_LEN];
+	int err = safe_memcpy_with_padding(slot_desc, SLOT_DESC_LEN,
 					   "slot description",
 					   strlen("slot description"), PAD_VAL);
 	assert_int_equal(err, SAFE_OK);
@@ -138,8 +137,8 @@ static void test_hsm_add_slot_error_already_exists(void **state) {
 	setup();
 
 	unsigned long slot_id = 8;
-	unsigned char slot_desc[SLOT_DESC_SIZE];
-	int err = safe_memcpy_with_padding(slot_desc, SLOT_DESC_SIZE,
+	unsigned char slot_desc[SLOT_DESC_LEN];
+	int err = safe_memcpy_with_padding(slot_desc, SLOT_DESC_LEN,
 					   "slot description",
 					   strlen("slot description"), PAD_VAL);
 	assert_int_equal(err, SAFE_OK);

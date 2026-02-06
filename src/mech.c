@@ -1,5 +1,4 @@
-#include "mechanism.h"
-#include "common.h"
+#include "mech.h"
 
 #include <stdlib.h>
 
