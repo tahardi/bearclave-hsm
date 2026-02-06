@@ -69,6 +69,10 @@ add_executable(test_hsm tests/test_hsm.c)
 target_link_libraries(test_hsm bearclave-hsm cmocka::cmocka)
 add_test(NAME hsm_tests COMMAND test_hsm)
 
+add_executable(test_mech tests/test_mech.c)
+target_link_libraries(test_mech bearclave-hsm cmocka::cmocka)
+add_test(NAME mech_tests COMMAND test_mech)
+
 add_executable(test_pkcs11 tests/test_pkcs11.c)
 target_link_libraries(test_pkcs11 bearclave-hsm cmocka::cmocka)
 add_test(NAME pkcs11_tests COMMAND test_pkcs11)

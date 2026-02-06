@@ -30,7 +30,6 @@ void mech_free(mech_t *mech) {
 	if (mech == NULL) {
 		return;
 	}
-
 	free(mech->info);
 	free(mech);
 }
