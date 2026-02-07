@@ -23,6 +23,7 @@ typedef struct {
 typedef enum {
 	SLOT_OK = 0,
 	SLOT_ERR_BAD_ARGS,
+	SLOT_ERR_TOKEN_NOT_SET,
 } slot_error_t;
 
 slot_t *slot_new(unsigned long slot_id, unsigned char desc[SLOT_DESC_LEN],
@@ -33,5 +34,6 @@ bool slot_has_token(slot_t *slot);
 slot_error_t slot_get_id(slot_t *slot, unsigned long *slot_id);
 slot_error_t slot_get_info(slot_t *slot, slot_info_t *info);
 slot_error_t slot_get_token(slot_t *slot, token_t **token);
+slot_error_t slot_set_token(slot_t *slot, token_t *token);
 
 #endif // BEARCLAVE_SLOT_H

@@ -48,7 +48,18 @@ void slot_free(slot_t *slot) {
 }
 
 bool slot_has_token(slot_t *slot) {
+	if (slot == NULL) {
+		return false;
+	}
 	return slot->token != NULL;
+}
+
+slot_error_t slot_get_id(slot_t *slot, unsigned long *slot_id) {
+	if (slot == NULL || slot_id == NULL) {
+		return SLOT_ERR_BAD_ARGS;
+	}
+	*slot_id = slot->slot_id;
+	return SLOT_OK;
 }
 
 slot_error_t slot_get_info(slot_t *slot, slot_info_t *info) {
@@ -73,18 +84,21 @@ slot_error_t slot_get_info(slot_t *slot, slot_info_t *info) {
 	return SLOT_OK;
 }
 
-slot_error_t slot_get_id(slot_t *slot, unsigned long *slot_id) {
-	if (slot == NULL || slot_id == NULL) {
-		return SLOT_ERR_BAD_ARGS;
-	}
-	*slot_id = slot->slot_id;
-	return SLOT_OK;
-}
-
 slot_error_t slot_get_token(slot_t *slot, token_t **token) {
 	if (slot == NULL || token == NULL) {
 		return SLOT_ERR_BAD_ARGS;
 	}
+	if (slot->token == NULL) {
+		return SLOT_ERR_TOKEN_NOT_SET;
+	}
 	*token = slot->token;
+	return SLOT_OK;
+}
+
+slot_error_t slot_set_token(slot_t *slot, token_t *token) {
+	if (slot == NULL || token == NULL) {
+		return SLOT_ERR_BAD_ARGS;
+	}
+	slot->token = token;
 	return SLOT_OK;
 }
