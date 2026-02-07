@@ -64,9 +64,6 @@ hsm_error_t hsm_finalize(void) {
 		free(g_hsm.info);
 	}
 
-	for (size_t i = 0; i < g_hsm.slots_len; i++) {
-		slot_free(g_hsm.slots[i]);
-	}
 	if (g_hsm.slots != NULL) {
 		free((void *)g_hsm.slots);
 	}
@@ -80,11 +77,11 @@ bool hsm_is_initialized(void) {
 }
 
 hsm_error_t hsm_get_info(hsm_info_t *info) {
-	if (!g_hsm.initialized) {
-		return HSM_ERR_NOT_INITIALIZED;
-	}
 	if (info == NULL) {
 		return HSM_ERR_BAD_ARGS;
+	}
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
 	}
 
 	info->ck_version.major = g_hsm.info->ck_version.major;
@@ -109,11 +106,11 @@ hsm_error_t hsm_get_info(hsm_info_t *info) {
 }
 
 hsm_error_t hsm_add_slot(slot_t *slot) {
-	if (!g_hsm.initialized) {
-		return HSM_ERR_NOT_INITIALIZED;
-	}
 	if (slot == NULL) {
 		return HSM_ERR_BAD_ARGS;
+	}
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
 	}
 
 	unsigned long slot_id = 0;
@@ -141,11 +138,11 @@ hsm_error_t hsm_add_slot(slot_t *slot) {
 }
 
 hsm_error_t hsm_get_slot(unsigned long slot_id, slot_t **slot) {
-	if (!g_hsm.initialized) {
-		return HSM_ERR_NOT_INITIALIZED;
-	}
 	if (slot == NULL) {
 		return HSM_ERR_BAD_ARGS;
+	}
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
 	}
 
 	for (size_t i = 0; i < g_hsm.slots_len; i++) {
@@ -163,11 +160,11 @@ hsm_error_t hsm_get_slot(unsigned long slot_id, slot_t **slot) {
 }
 
 hsm_error_t hsm_get_slots_len(bool tokenPresent, unsigned long *slots_len) {
-	if (!g_hsm.initialized) {
-		return HSM_ERR_NOT_INITIALIZED;
-	}
 	if (slots_len == NULL) {
 		return HSM_ERR_BAD_ARGS;
+	}
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
 	}
 
 	unsigned long len = 0;
@@ -182,15 +179,15 @@ hsm_error_t hsm_get_slots_len(bool tokenPresent, unsigned long *slots_len) {
 
 hsm_error_t hsm_get_slot_list(bool tokenPresent, unsigned long *slot_list,
 			      unsigned long slot_count) {
-	if (!g_hsm.initialized) {
-		return HSM_ERR_NOT_INITIALIZED;
-	}
 	if (slot_list == NULL || slot_count > g_hsm.slots_len) {
 		return HSM_ERR_BAD_ARGS;
 	}
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
+	}
 
 	for (size_t i = 0; i < g_hsm.slots_len; i++) {
-		if (slot_has_token(g_hsm.slots[i]) && tokenPresent) {
+		if (slot_has_token(g_hsm.slots[i]) == tokenPresent) {
 			unsigned long slot_id;
 			int err = slot_get_id(g_hsm.slots[i], &slot_id);
 			if (err != SLOT_OK) {
@@ -203,11 +200,11 @@ hsm_error_t hsm_get_slot_list(bool tokenPresent, unsigned long *slot_list,
 }
 
 hsm_error_t hsm_get_slot_info(unsigned long slot_id, slot_info_t *info) {
-	if (!g_hsm.initialized) {
-		return HSM_ERR_NOT_INITIALIZED;
-	}
 	if (info == NULL) {
 		return HSM_ERR_BAD_ARGS;
+	}
+	if (!g_hsm.initialized) {
+		return HSM_ERR_NOT_INITIALIZED;
 	}
 
 	for (size_t i = 0; i < g_hsm.slots_len; i++) {
