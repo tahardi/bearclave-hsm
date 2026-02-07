@@ -85,6 +85,10 @@ add_executable(test_safe tests/test_safe.c)
 target_link_libraries(test_safe bearclave-hsm cmocka::cmocka)
 add_test(NAME safe_tests COMMAND test_safe)
 
+add_executable(test_slot tests/test_slot.c)
+target_link_libraries(test_slot bearclave-hsm cmocka::cmocka)
+add_test(NAME slot_tests COMMAND test_slot)
+
 add_executable(test_token tests/test_token.c)
 target_link_libraries(test_token bearclave-hsm cmocka::cmocka)
 add_test(NAME token_tests COMMAND test_token)
