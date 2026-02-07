@@ -21,8 +21,7 @@ typedef struct token {
 
 token_t *token_new(unsigned char man_id[MAN_ID_LEN],
 		   unsigned char model[TOKEN_MODEL_LEN],
-		   unsigned char serial[TOKEN_SERIAL_LEN], version_t fw_version,
-		   version_t hw_version) {
+		   unsigned char serial[TOKEN_SERIAL_LEN]) {
 	if (man_id == NULL || model == NULL || serial == NULL) {
 		return NULL;
 	}
@@ -74,8 +73,10 @@ token_t *token_new(unsigned char man_id[MAN_ID_LEN],
 	token->info->ulFreePublicMemory = TOKEN_TOTAL_PUBLIC_MEMORY;
 	token->info->ulTotalPrivateMemory = TOKEN_TOTAL_PRIVATE_MEMORY;
 	token->info->ulFreePrivateMemory = TOKEN_TOTAL_PRIVATE_MEMORY;
-	token->info->fw_version = fw_version;
-	token->info->hw_version = hw_version;
+	token->info->fw_version.major = FW_VERSION_MAJOR;
+	token->info->fw_version.minor = FW_VERSION_MINOR;
+	token->info->hw_version.major = HW_VERSION_MAJOR;
+	token->info->hw_version.minor = HW_VERSION_MINOR;
 	return token;
 }
 

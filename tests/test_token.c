@@ -1,8 +1,4 @@
 // NOLINTBEGIN
-#define TEST_TOKEN_FW_VERSION_MAJOR 0
-#define TEST_TOKEN_FW_VERSION_MINOR 1
-#define TEST_TOKEN_HW_VERSION_MAJOR 0
-#define TEST_TOKEN_HW_VERSION_MINOR 1
 #define TEST_TOKEN_LABEL "Token Label"
 #define TEST_TOKEN_MAN_ID "Token ID"
 #define TEST_TOKEN_MECH_TYPE 8
@@ -34,10 +30,6 @@ static void setup_token(token_t **token) {
 	unsigned char man_id[MAN_ID_LEN];
 	unsigned char model[TOKEN_MODEL_LEN];
 	unsigned char serial[TOKEN_SERIAL_LEN];
-	version_t fw_version = {TEST_TOKEN_FW_VERSION_MAJOR,
-				TEST_TOKEN_FW_VERSION_MINOR};
-	version_t hw_version = {TEST_TOKEN_HW_VERSION_MAJOR,
-				TEST_TOKEN_HW_VERSION_MINOR};
 
 	int err =
 		safe_memcpy_with_padding(man_id, MAN_ID_LEN, TEST_TOKEN_MAN_ID,
@@ -53,7 +45,7 @@ static void setup_token(token_t **token) {
 				       strlen(TEST_TOKEN_SERIAL), PAD_VAL);
 	assert_int_equal(err, SAFE_OK);
 
-	*token = token_new(man_id, model, serial, fw_version, hw_version);
+	*token = token_new(man_id, model, serial);
 	assert_non_null(*token);
 }
 
@@ -183,10 +175,10 @@ static void test_token_get_info_happy_path(void **state) {
 	assert_int_equal(info.ulMinPinLen, TOKEN_MIN_PIN_LEN);
 	assert_int_equal(info.ulTotalPublicMemory, TOKEN_TOTAL_PUBLIC_MEMORY);
 	assert_int_equal(info.ulTotalPrivateMemory, TOKEN_TOTAL_PRIVATE_MEMORY);
-	assert_int_equal(info.fw_version.major, TEST_TOKEN_FW_VERSION_MAJOR);
-	assert_int_equal(info.fw_version.minor, TEST_TOKEN_FW_VERSION_MINOR);
-	assert_int_equal(info.hw_version.major, TEST_TOKEN_HW_VERSION_MAJOR);
-	assert_int_equal(info.hw_version.minor, TEST_TOKEN_HW_VERSION_MINOR);
+	assert_int_equal(info.fw_version.major, FW_VERSION_MAJOR);
+	assert_int_equal(info.fw_version.minor, FW_VERSION_MINOR);
+	assert_int_equal(info.hw_version.major, HW_VERSION_MAJOR);
+	assert_int_equal(info.hw_version.minor, HW_VERSION_MINOR);
 	assert_memory_equal(info.label, TEST_TOKEN_LABEL,
 			    strlen(TEST_TOKEN_LABEL));
 	assert_memory_equal(info.man_id, TEST_TOKEN_MAN_ID,
