@@ -56,8 +56,7 @@ typedef enum {
 
 token_t *token_new(unsigned char man_id[MAN_ID_LEN],
 		   unsigned char model[TOKEN_MODEL_LEN],
-		   unsigned char serial[TOKEN_SERIAL_LEN], version_t fw_version,
-		   version_t hw_version);
+		   unsigned char serial[TOKEN_SERIAL_LEN]);
 void token_free(token_t *token);
 
 token_error_t token_initialize(token_t *token,
